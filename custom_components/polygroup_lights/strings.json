@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Polygroup Christmas tree",
+        "description": "Select the 433.895 MHz OOK transmitter and receiver. Both are required to track physical remote presses. Learn the remote buttons after setup.",
+        "data": {"transmitter": "RF transmitter", "receiver": "RF receiver"}
+      }
+    },
+    "error": {"invalid_adapter": "Select compatible RF adapters from the lists."},
+    "abort": {
+      "already_configured": "This RF transmitter already has a tree configured.",
+      "receiver_support_required": "This Home Assistant version lacks native RF receiver support. Install a version exposing radio_frequency receivers and subscription helpers.",
+      "no_adapters": "Set up both a 433.895 MHz OOK RF transmitter and receiver first."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Brightness calibration",
+        "description": "Leave empty until measured. Otherwise enter percentages in the order reached by successive Brightness presses (for example 100,75,50,25 only if verified). Then synchronize the current cycle index. Timer is intentionally unsupported.",
+        "data": {"brightness_levels": "Brightness cycle percentages"}
+      }
+    },
+    "error": {"invalid_levels": "Enter at least two distinct percentages from 1 to 100 separated by commas, or leave empty."}
+  }
+}

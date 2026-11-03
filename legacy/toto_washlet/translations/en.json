@@ -1,0 +1,200 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "This TOTO Washlet has already been configured with this transmitter.",
+      "no_emitters": "No infrared transmitter entities found. Please set up an infrared device first."
+    },
+    "step": {
+      "user": {
+        "data": {
+          "infrared_entity_id": "Infrared transmitter",
+          "infrared_receiver_entity_id": "Infrared receiver"
+        },
+        "data_description": {
+          "infrared_entity_id": "The infrared transmitter entity to use for sending commands.",
+          "infrared_receiver_entity_id": "The optional infrared receiver entity to use for received remote commands."
+        },
+        "description": "Select the infrared transmitter entity to use for controlling your TOTO Washlet.",
+        "title": "Set up TOTO Washlet"
+      }
+    }
+  },
+  "options": {
+    "abort": {
+      "no_receivers": "No infrared receiver entities found. Please set up an infrared receiver first."
+    },
+    "step": {
+      "init": {
+        "data": {
+          "infrared_receiver_entity_id": "Infrared receiver"
+        },
+        "data_description": {
+          "infrared_receiver_entity_id": "The infrared receiver entity to use for received remote commands."
+        },
+        "description": "Select the infrared receiver entity to use for received TOTO Washlet remote commands.",
+        "title": "TOTO Washlet options"
+      }
+    }
+  },
+  "entity": {
+    "button": {
+      "dryer": {
+        "name": "Dryer"
+      },
+      "eco_flush": {
+        "name": "Eco flush"
+      },
+      "front": {
+        "name": "Front wash"
+      },
+      "soft_front": {
+        "name": "Soft front wash"
+      },
+      "full_flush": {
+        "name": "Full flush"
+      },
+      "lid_open_close": {
+        "name": "Lid open/close"
+      },
+      "light_flush": {
+        "name": "Light flush"
+      },
+      "oscillate": {
+        "name": "Oscillate"
+      },
+      "power_deodorizer": {
+        "name": "Power deodorizer"
+      },
+      "wand_clean": {
+        "name": "Wand clean"
+      },
+      "manual_nozzle_cleaning": {
+        "name": "Manual nozzle cleaning"
+      },
+      "manual_premist": {
+        "name": "Manual premist"
+      },
+      "lower_water": {
+        "name": "Lower water"
+      },
+      "pulsate": {
+        "name": "Pulsate"
+      },
+      "rear": {
+        "name": "Rear wash"
+      },
+      "seat_open_close": {
+        "name": "Seat open/close"
+      },
+      "soft_rear": {
+        "name": "Soft rear wash"
+      },
+      "stop": {
+        "name": "Stop"
+      },
+      "mystery": {
+        "name": "Mystery"
+      }
+    },
+    "select": {
+      "water_temperature": {
+        "name": "Water temperature",
+        "state": {
+          "off": "Off",
+          "1": "1/5",
+          "2": "2/5",
+          "3": "3/5",
+          "4": "4/5",
+          "5": "5/5"
+        }
+      },
+      "dryer_air_temperature": {
+        "name": "Dryer air temperature",
+        "state": {
+          "1": "1/5",
+          "2": "2/5",
+          "3": "3/5",
+          "4": "4/5",
+          "5": "5/5"
+        }
+      },
+      "seat_temperature": {
+        "name": "Seat temperature",
+        "state": {
+          "off": "Off",
+          "1": "1/5",
+          "2": "2/5",
+          "3": "3/5",
+          "4": "4/5",
+          "5": "5/5"
+        }
+      },
+      "nozzle_position": {
+        "name": "Nozzle position",
+        "state": {
+          "1": "1/5",
+          "2": "2/5",
+          "3": "3/5",
+          "4": "4/5",
+          "5": "5/5"
+        }
+      },
+      "pressure_level": {
+        "name": "Pressure level",
+        "state": {
+          "1": "1/5",
+          "2": "2/5",
+          "3": "3/5",
+          "4": "4/5",
+          "5": "5/5"
+        }
+      },
+      "user_profile": {
+        "name": "User profile",
+        "state": {
+          "1": "User 1",
+          "2": "User 2",
+          "3": "User 3",
+          "4": "User 4"
+        }
+      },
+      "energy_saver": {
+        "name": "Energy saver",
+        "state": {
+          "off": "Off",
+          "auto": "Auto",
+          "auto_plus": "Auto+"
+        }
+      },
+      "timer_energy_saver": {
+        "name": "Timer energy saver",
+        "state": {
+          "off": "Off",
+          "6": "6 hours"
+        }
+      }
+    },
+    "switch": {
+      "auto_flush": {
+        "name": "Auto flush"
+      },
+      "auto_lid_open": {
+        "name": "Auto lid open"
+      },
+      "close_lid_before_flushing": {
+        "name": "Close lid before flushing"
+      },
+      "bowl_light": {
+        "name": "Bowl light"
+      },
+      "beep_sound": {
+        "name": "Beep sound"
+      }
+    },
+    "event": {
+      "received_command": {
+        "name": "Received command"
+      }
+    }
+  }
+}

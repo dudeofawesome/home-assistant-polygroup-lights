@@ -1,0 +1,7 @@
+interface:
+  display_name: "TOTO Washlet IR Capture"
+  short_description: "Capture and decode TOTO Washlet IR codes"
+  default_prompt: "Use $toto-washlet-ir-capture to watch IR logs and add support for a new TOTO Washlet remote button."
+
+policy:
+  allow_implicit_invocation: true

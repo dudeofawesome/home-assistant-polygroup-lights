@@ -1,0 +1,12 @@
+{
+  "domain": "polygroup_lights",
+  "name": "Polygroup Lights",
+  "codeowners": ["@dudeofawesome"],
+  "config_flow": true,
+  "dependencies": ["radio_frequency"],
+  "documentation": "https://github.com/dudeofawesome/home-assistant-polygroup-lights",
+  "integration_type": "device",
+  "iot_class": "assumed_state",
+  "issue_tracker": "https://github.com/dudeofawesome/home-assistant-polygroup-lights/issues",
+  "version": "0.0.1"
+}

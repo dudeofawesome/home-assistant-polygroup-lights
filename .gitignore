@@ -1,0 +1,42 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Ruff cache
+.ruff_cache/
+
+# Test / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml

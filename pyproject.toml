@@ -1,0 +1,49 @@
+[project]
+  name = "home-assistant-polygroup-lights"
+  version = "0.0.1"
+  requires-python = ">=3.14.2"
+
+[dependency-groups]
+  dev = [
+    "pytest>=9.0.3",
+    "pytest-homeassistant-custom-component==0.13.338",
+    "rf-protocols==4.0.1",
+]
+
+[tool.ruff]
+  target-version = "py314"
+  line-length = 88
+
+  [tool.ruff.lint]
+    select = [
+      "E",      # pycodestyle errors
+      "W",      # pycodestyle warnings
+      "F",      # pyflakes
+      "I",      # isort
+      "UP",     # pyupgrade
+      "B",      # flake8-bugbear
+      "C4",     # flake8-comprehensions
+      "SIM",    # flake8-simplify
+    ]
+    ignore = [
+      "E501",   # line too long (handled by formatter)
+      "SIM102", # nested if statements (sometimes clearer)
+      "SIM105", # contextlib.suppress (try/except/pass is clearer for async)
+    ]
+
+  [tool.ruff.lint.isort]
+    force-single-line = false
+    combine-as-imports = true
+
+  [tool.ruff.format]
+    quote-style = "double"
+    indent-style = "space"
+
+[tool.pytest.ini_options]
+  minversion = "6.0"
+  asyncio_mode = "auto"
+  addopts = "-ra -q"
+  testpaths = [
+    "tests",
+    "integration",
+  ]

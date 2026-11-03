@@ -1,0 +1,60 @@
+learn_command:
+  name: Learn remote button
+  description: Press the named physical button within 30 seconds. Stores the next complete matching RF frame; do not press Timer.
+  target:
+    entity:
+      integration: polygroup_lights
+      domain: light
+  fields:
+    command:
+      required: true
+      selector:
+        select:
+          options:
+            - power
+            - brightness
+            - combo
+            - clear_steady
+            - clear_fade
+            - clear_twinkle
+            - color_steady
+            - color_fade
+            - color_twinkle
+            - clear_color_alt
+            - clear_color_fade
+            - clear_color_fast_blink
+            - clear_color_slow_blink
+synchronize_state:
+  name: Synchronize observed tree state
+  description: Record the tree's current state without transmitting. Needed initially and after missed remote presses, controller button presses, or power loss.
+  target:
+    entity:
+      integration: polygroup_lights
+      domain: light
+  fields:
+    power:
+      required: true
+      selector:
+        boolean:
+    effect:
+      selector:
+        select:
+          options:
+            - combo
+            - clear_steady
+            - clear_fade
+            - clear_twinkle
+            - color_steady
+            - color_fade
+            - color_twinkle
+            - clear_color_alt
+            - clear_color_fade
+            - clear_color_fast_blink
+            - clear_color_slow_blink
+    brightness_index:
+      description: Zero-based index in the calibrated brightness cycle.
+      selector:
+        number:
+          min: 0
+          max: 100
+          mode: box
