@@ -1031,7 +1031,7 @@ wheels = [
 
 [[package]]
 name = "home-assistant-polygroup-lights"
-version = "0.0.2"
+version = "1.0.0"
 source = { virtual = "." }
 
 [package.dev-dependencies]
