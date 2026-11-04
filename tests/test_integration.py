@@ -7,6 +7,7 @@ from homeassistant.components import radio_frequency as rf
 from homeassistant.core import Context
 from homeassistant.data_entry_flow import InvalidData
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers import entity_registry as er
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -17,6 +18,61 @@ from custom_components.polygroup_lights.coordinator import TreeController
 
 TX = "radio_frequency.tree_transmitter"
 LIGHT = "light.christmas_tree"
+
+
+@pytest.mark.parametrize(
+    ("command", "code"),
+    [
+        ("combo", 0x807F7788),
+        ("brightness", 0x807F11EE),
+        ("power", 0x807FFF00),
+        ("clear_steady", 0x807F6699),
+        ("color_steady", 0x807F55AA),
+        ("clear_twinkle", 0x807FEE11),
+    ],
+)
+async def test_captured_buttons_enabled_by_default_and_use_native_transport(
+    hass, entry, command, code
+):
+    hass.states.async_set(TX, "unknown")
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    registry = er.async_get(hass)
+    entity_id = registry.async_get_entity_id(
+        "button", DOMAIN, f"{entry.entry_id}_test_captured_{command}"
+    )
+    assert registry.async_get(entity_id).disabled_by is None
+    assert hass.states.get(entity_id) is not None
+    controller = entry.runtime_data
+    controller.state.power = False
+    with patch.object(rf, "async_send_command", new_callable=AsyncMock) as send:
+        await hass.services.async_call(
+            "button", "press", {"entity_id": entity_id}, blocking=True
+        )
+        send.assert_awaited_once()
+        assert send.call_args.args[1] == TX
+        assert send.call_args.args[2].get_raw_timings() == encode_frame(code)
+    assert controller.state.last_command == command
+    if command == "power":
+        assert controller.state.power is True
+    if command in EFFECTS:
+        assert controller.state.effect == command
+    assert controller.state.brightness_index is None
+    with (
+        patch.object(
+            rf, "async_send_command", side_effect=HomeAssistantError("offline")
+        ),
+        pytest.raises(HomeAssistantError),
+    ):
+        controller.state.last_command = None
+        await hass.services.async_call(
+            "button", "press", {"entity_id": entity_id}, blocking=True
+        )
+    assert controller.state.last_command is None
+    hass.states.async_set(TX, "unavailable")
+    await hass.async_block_till_done()
+    assert hass.states.get(entity_id).state == "unavailable"
+    assert await hass.config_entries.async_unload(entry.entry_id)
 
 
 @pytest.fixture

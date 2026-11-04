@@ -10,6 +10,16 @@ from .const import FREQUENCY
 # The handoff's On/Off candidate has not been verified for transmission.
 VERIFIED_CODES: dict[str, int] = {}
 
+# Captured from physical remote presses; tree acceptance of replay is unverified.
+CAPTURED_CODES: dict[str, int] = {
+    "combo": 0x807F7788,
+    "clear_steady": 0x807F6699,
+    "color_steady": 0x807F55AA,
+    "clear_twinkle": 0x807FEE11,
+    "brightness": 0x807F11EE,
+    "power": 0x807FFF00,
+}
+
 
 def encode_frame(code: int) -> list[int]:
     """Encode the measured 32-bit pulse-distance frame, MSB first."""

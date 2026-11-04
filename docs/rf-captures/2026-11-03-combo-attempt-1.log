@@ -1,0 +1,94 @@
+INFO ESPHome 2026.10.2
+INFO Loaded validated config cache for christmas-tree.yaml, skipping validation.
+INFO Starting log output from christmas-tree-rf.local using esphome API
+INFO Successfully resolved christmas-tree-rf.local in 0.032s
+INFO Successfully connected to christmas-tree-rf @ fd80:7b22:2e2b:1:2cb7:e69d:984f:c2d5 in 0.027s
+INFO Successful handshake with christmas-tree-rf @ fd80:7b22:2e2b:1:2cb7:e69d:984f:c2d5 in 0.157s
+[03:25:46.674][I][app:164]: ESPHome version 2026.10.1 compiled on 2026-11-03 05:53:53 +0000
+[03:25:46.702][I][app:171]: ESP32 Chip: ESP32-C6 rev0.2, 1 core(s)
+[03:25:46.702][W][app:189]: Set flash_chip: generic under esp32 > framework > advanced to save IRAM
+[03:25:46.702][C][logger:218]: Logger:
+[03:25:46.702][C][logger:218]:   Max Level: DEBUG
+[03:25:46.702][C][logger:218]:   Initial Level: DEBUG
+[03:25:46.757][C][logger:225]:   Log Baud Rate: 115200
+[03:25:46.757][C][logger:225]:   Hardware UART: USB_SERIAL_JTAG
+[03:25:46.757][C][logger:234]:   Task Log Buffer Size: 768 bytes
+[03:25:46.843][C][spi:066]: SPI bus:
+[03:25:46.843][C][spi:131]:   CLK Pin: GPIO20
+[03:25:46.843][C][spi:131]:   SDI Pin: GPIO22
+[03:25:46.843][C][spi:131]:   SDO Pin: GPIO21
+[03:25:46.913][C][spi:074]:   Using HW SPI: SPI2_HOST
+[03:25:46.913][C][cc1101:241]: CC1101:
+[03:25:46.913][C][cc1101:241]:   Chip ID: 0x0014
+[03:25:46.913][C][cc1101:241]:   Frequency: 433894848 Hz
+[03:25:46.913][C][cc1101:241]:   Channel: 0
+[03:25:46.913][C][cc1101:241]:   Modulation: ASK/OOK
+[03:25:46.913][C][cc1101:241]:   Symbol Rate: 4996 baud
+[03:25:46.913][C][cc1101:241]:   Filter Bandwidth: 203125.0 Hz
+[03:25:46.913][C][cc1101:241]:   Output Power: 9.9 dBm
+[03:25:47.018][C][cc1101:131]:   CS Pin: GPIO2
+[03:25:47.018][C][remote_receiver:125]: Remote Receiver:
+[03:25:47.018][C][remote_receiver:125]:   Clock resolution: 1000000 hz
+[03:25:47.018][C][remote_receiver:125]:   RMT symbols: 96
+[03:25:47.018][C][remote_receiver:125]:   Filter symbols: 0
+[03:25:47.018][C][remote_receiver:125]:   Receive symbols: 192
+[03:25:47.018][C][remote_receiver:125]:   Buffer size: 3120 bytes
+[03:25:47.018][C][remote_receiver:125]:   Tolerance: 25%
+[03:25:47.018][C][remote_receiver:125]:   Carrier frequency: 0 hz
+[03:25:47.018][C][remote_receiver:125]:   Carrier duty: 100%
+[03:25:47.018][C][remote_receiver:125]:   Filter out pulses shorter than: 100 us
+[03:25:47.018][C][remote_receiver:125]:   Signal is done after 10000 us of no changes
+[03:25:47.018][C][remote_receiver:131]:   Pin: GPIO1
+[03:25:47.018][C][remote_transmitter:065]: Remote Transmitter:
+[03:25:47.018][C][remote_transmitter:066]:   Clock resolution: 1000000 hz
+[03:25:47.018][C][remote_transmitter:066]:   RMT symbols: 48
+[03:25:47.018][C][remote_transmitter:131]:   Pin: GPIO0
+[03:25:47.024][C][network:050]: Network:
+[03:25:47.024][C][network:050]:   TCP send buffer: 5760 bytes
+[03:25:47.024][C][openthread:029]: Open Thread:
+[03:25:47.024][C][openthread:033]:   Device Type: MTD
+[03:25:47.024][C][openthread:040]:   Device is configured as Minimal End Device (MED)
+[03:25:47.122][C][esphome.ota:129]: Over-The-Air updates:
+[03:25:47.122][C][esphome.ota:129]:   Address: christmas-tree-rf.local:3232
+[03:25:47.122][C][esphome.ota:129]:   Version: 2
+[03:25:47.122][C][esphome.ota:129]:   Encryption: required
+[03:25:47.123][C][safe_mode:058]: Safe Mode:
+[03:25:47.123][C][safe_mode:058]:   Successful after: 60s
+[03:25:47.123][C][safe_mode:058]:   Invoke after: 10 attempts
+[03:25:47.123][C][safe_mode:058]:   Duration: 300s
+[03:25:47.123][C][safe_mode:079]:   Bootloader rollback: supported
+[03:25:47.123][C][api:368]: Server:
+[03:25:47.123][C][api:368]:   Address: christmas-tree-rf.local:6053
+[03:25:47.123][C][api:368]:   Listen backlog: 4
+[03:25:47.123][C][api:368]:   Max connections: 5
+[03:25:47.165][C][api:375]:   Noise encryption: YES
+[03:25:47.166][C][mdns:324]: mDNS:
+[03:25:47.166][C][mdns:324]:   Hostname: christmas-tree-rf
+[03:25:47.166][C][ir_rf_proxy:043]: RF Proxy 'Christmas Tree RF Transmitter'
+[03:25:47.166][C][ir_rf_proxy:043]:   Supports Transmitter: YES
+[03:25:47.166][C][ir_rf_proxy:043]:   Supports Receiver: NO
+[03:25:47.166][C][ir_rf_proxy:053]:   Frequency: 433.895 MHz (fixed)
+[03:25:47.211][C][ir_rf_proxy:043]: RF Proxy 'Christmas Tree RF Receiver'
+[03:25:47.211][C][ir_rf_proxy:043]:   Supports Transmitter: NO
+[03:25:47.211][C][ir_rf_proxy:043]:   Supports Receiver: YES
+[03:25:47.212][C][ir_rf_proxy:053]:   Frequency: 433.895 MHz (fixed)
+[03:26:03.262][I][remote.raw:026]: Received Raw: -8907, 100, -7406, 300, -8607, 400, -6055, 150, -350, 125, -4479, 150, -2227, 475, -150, 125, -676, 800, -626, 625, -826, 425, -151, 125, -1801, 751, -675, 776, -650, 801, -625, 801, -9082, 526, -125, 2602, -100, 4453, -125, 926, -5454, 
+[03:26:03.263][I][remote.raw:026]:   801, -1701, 300, -101, 375, -675, 626, -800, 776, -651, 800, -651, 800, -626, 775, -676, 100, -150, 100, -200, 226, -675, 776, -675, 751, -1726, 801, -1726, 175, -451, 125, -4228, 375, -150, 126, -1876, 125, -5229, 125, -951, 776, -8156, 776, -16062, 
+[03:26:03.263][I][remote.raw:035]:   501, -175, 100
+[03:26:03.336][I][remote.raw:035]: Received Raw: 150, -125, 126, -325, 150
+[03:26:03.381][I][remote.raw:035]: Received Raw: -175, 175, -8107, 575, -8181, 576, -7030, 651, -8181, 300, -176, 300, -8156, 476, -7430, 751, -7456, 800
+[03:26:04.909][I][remote.raw:035]: Received Raw: 701, -7756, 100
+[03:26:05.008][I][remote.raw:035]: Received Raw: 751, -8231, 300, -101, 125, -7731, 625
+[03:26:05.113][I][remote.raw:035]: Received Raw: 175, -126, 175, -300, 250
+[03:26:05.162][I][remote.raw:035]: Received Raw: 751, -16463, 775, -8207, 150, -7355, 751, -8206, 126
+[03:26:05.204][I][remote.raw:035]: Received Raw: 1451
+[03:26:05.229][I][remote.raw:035]: Received Raw: 100, -350, 226, -675, 200, -7106, 650, -7556, 351, -9232, 175
+[03:26:05.269][I][remote.raw:035]: Received Raw: 200, -8357, 775, -7481, 776
+[03:26:06.640][I][remote.raw:035]: Received Raw: -125, 275, -16238, 100
+[03:26:06.717][I][remote.raw:035]: Received Raw: 150, -8657, 125, -8331, 551, -7706, 100, -150, 300
+[03:26:06.872][I][remote.raw:035]: Received Raw: -16814, 175, -8957, 175, -7331, 500, -7481, 275, -676, 400, -7130, 125, -151, 225, -8406, 701
+[03:26:06.988][I][remote.raw:035]: Received Raw: -276, 1025
+[03:26:07.015][I][remote.raw:035]: Received Raw: 450, -7006, 500, -676, 300
+[03:26:07.055][I][remote.raw:035]: Received Raw: 450
+[03:26:07.102][I][remote.raw:035]: Received Raw: 375, -8157, 775, -7481, 776
+

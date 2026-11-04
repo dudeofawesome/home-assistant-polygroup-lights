@@ -12,7 +12,9 @@ Add `https://github.com/dudeofawesome/home-assistant-polygroup-lights` as an Int
 
 ## Hardware support status
 
-The model's command set is still being captured and verified during development. No verified RF codes are bundled yet, so a fresh installation cannot transmit tree commands. Unsupported commands report an error rather than sending guessed codes. Model support should supply bundled codes; users should not need to learn or enter them. The light's `available_commands` attribute lists commands with an available code.
+The model's command set is still being captured and verified during development. No verified RF codes are bundled yet, so a fresh installation's normal light controls cannot transmit tree commands. Unsupported commands report an error rather than sending guessed codes. Model support should supply bundled codes; users should not need to learn or enter them. The light's `available_commands` attribute lists commands with an available code.
+
+Enabled-by-default diagnostic buttons allow replay testing of captured Combo, Clear Steady, Color Steady, Clear Twinkle, Brightness, and On/Off codes. To test, press the corresponding **Test captured …** entity on the tree's device page while observing the tree. These send real RF commands; On/Off toggles power. The tree's acceptance of these captures is unverified. Successful sends update assumed state, but do not establish that the tree responded. Normal light controls and Cycle brightness use verified defaults or existing saved bindings only.
 
 ## Stateful operation
 

@@ -1,5 +1,8 @@
 """Exercise real captured timings, malformed frames, and repeated packets."""
 
+import re
+from pathlib import Path
+
 import pytest
 
 from custom_components.polygroup_lights.commands import (
@@ -78,6 +81,24 @@ CAPTURE = [
     913,
     -8988,
 ]
+
+
+@pytest.mark.parametrize(
+    ("filename", "code", "frame_count"),
+    [
+        ("combo-attempt-2", 0x807F7788, 15),
+        ("brightness", 0x807F11EE, 15),
+        ("on-off-attempt-1", 0x807FFF00, 7),
+    ],
+)
+def test_recorded_remote_captures(filename, code, frame_count):
+    path = Path(__file__).parents[1] / "docs" / "rf-captures"
+    timings = []
+    for line in (path / f"2026-11-03-{filename}.log").read_text().splitlines():
+        if "[remote.raw:" in line:
+            payload = line.split("]:", 1)[1]
+            timings.extend(map(int, re.findall(r"-?\d+", payload)))
+    assert decode_frames(timings) == [code] * frame_count
 
 
 def test_capture_and_noisy_bursts():
