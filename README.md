@@ -2,7 +2,7 @@
 
 Control a Polygroup Christmas tree with a PDR-053-29V controller and PDT-015-14 (053/056) RF remote through an ESPHome/CC1101 RF proxy at 433.895 MHz OOK.
 
-The integration provides a light with assumed power state and 11 effects: Combo; Clear Steady, Fade, and Twinkle; Color Steady, Fade, and Twinkle; and Clear/Color Alt, Fade, Fast Blink, and Slow Blink. It also provides a Cycle brightness button. Physical remote reception, in-app RF learning, and timer control are currently unsupported.
+The integration provides a light with assumed power state, an **Effect** dropdown for verified effects, and a Cycle brightness button. The remote's 11 effects are Combo; Clear Steady, Fade, and Twinkle; Color Steady, Fade, and Twinkle; and Clear/Color Alt, Fade, Fast Blink, and Slow Blink. Physical remote reception, in-app RF learning, and timer control are currently unsupported.
 
 ## Requirements and installation
 
@@ -12,7 +12,7 @@ Add `https://github.com/dudeofawesome/home-assistant-polygroup-lights` as an Int
 
 ## Hardware support status
 
-Verified RF codes are bundled for Combo, Clear Steady, Color Steady, Clear Twinkle, Brightness, and On/Off. These commands work through the light and enabled-by-default remote buttons without learning or entering codes. The remaining seven effects are not yet supported and report an error if requested. The light's `available_commands` attribute lists commands with an available code, including compatible saved bindings.
+Verified RF codes are bundled for Combo, Clear Steady, Color Steady, Clear Twinkle, Brightness, and On/Off. The **Effect** dropdown offers Combo, Clear Steady, Clear Twinkle, and Color Steady. Choosing an effect sends only its effect command and updates the light's assumed effect; use the light's on/off controls for power. Brightness and On/Off have separate remote buttons. These commands also work through the light without learning or entering codes. The remaining seven effects are not yet supported and report an error if requested. The light's `available_commands` attribute lists commands with an available code, including compatible saved bindings.
 
 The remote buttons send one command per press; On/Off toggles power even when its current state is unknown. The light's on/off controls require synchronized power state to avoid unwanted toggles. Brightness and Cycle brightness both send the physical remote's brightness command without assuming a percentage.
 
@@ -20,7 +20,7 @@ The remote buttons send one command per press; On/Off toggles power even when it
 
 Successful Home Assistant transmissions update the assumed state once per action; failed sends leave it unchanged. Power changes only when the desired state differs from the current state, preventing repeated `light.turn_on` calls from toggling the tree off. Effects update after their command is sent. Physical remote and wired controller presses do not update Home Assistant.
 
-The tree supplies no acknowledgement or state readback. Power begins unknown because On/Off is a toggle. Observe the tree, then press **Record tree as on** or **Record tree as off** under Configuration on its device page. These buttons update Home Assistant's power estimate without sending RF and remain available when the transmitter is offline. After recording the state, use the light's normal on/off controls. Synchronize again after physical remote or wired controller use, power loss, or any other change made outside Home Assistant. State is restored across restarts as an assumption. Availability of the light and remote command buttons follows the transmitter alone.
+The tree supplies no acknowledgement or state readback. Power begins unknown because On/Off is a toggle. Observe the tree, then press **Record tree as on** or **Record tree as off** under Configuration on its device page. These buttons update Home Assistant's power estimate without sending RF and remain available when the transmitter is offline. After recording the state, use the light's normal on/off controls. Synchronize again after physical remote or wired controller use, power loss, or any other change made outside Home Assistant. State is restored across restarts as an assumption. Availability of the light, effect dropdown, and remote command buttons follows the transmitter alone.
 
 Use `polygroup_lights.synchronize_state` to record power together with an observed effect or calibrated brightness index; this action also sends nothing.
 

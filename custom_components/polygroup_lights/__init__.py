@@ -6,13 +6,14 @@ from homeassistant.core import HomeAssistant
 
 from .coordinator import TreeController
 
-PLATFORMS = [Platform.LIGHT, Platform.BUTTON]
+PLATFORMS = [Platform.LIGHT, Platform.BUTTON, Platform.SELECT]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up transmitter controls with one shared assumed state model."""
     entry.runtime_data = TreeController(hass, entry)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    entry.runtime_data.notify()
     entry.async_on_unload(entry.add_update_listener(async_update_options))
     return True
 
@@ -24,5 +25,5 @@ async def async_update_options(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload the light and brightness button platforms."""
+    """Unload the tree's control platforms."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)

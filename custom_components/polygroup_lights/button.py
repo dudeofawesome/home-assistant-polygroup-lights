@@ -1,19 +1,32 @@
 """Remote button controls and manual power-state synchronization."""
 
 from homeassistant.components.button import ButtonEntity
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity import EntityCategory
 
 from .commands import VERIFIED_CODES
-from .const import EFFECTS
+from .const import DOMAIN, EFFECTS
 from .entity import PolygroupEntity
 
 PARALLEL_UPDATES = 1
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
+    registry = er.async_get(hass)
+    for command in VERIFIED_CODES:
+        if command in EFFECTS and (
+            entity_id := registry.async_get_entity_id(
+                "button", DOMAIN, f"{entry.entry_id}_test_captured_{command}"
+            )
+        ):
+            registry.async_remove(entity_id)
     async_add_entities(
         [PolygroupBrightnessButton(entry)]
-        + [PolygroupCommandButton(entry, command) for command in VERIFIED_CODES]
+        + [
+            PolygroupCommandButton(entry, command)
+            for command in VERIFIED_CODES
+            if command not in EFFECTS
+        ]
         + [PolygroupPowerStateButton(entry, power) for power in (True, False)]
     )
 
