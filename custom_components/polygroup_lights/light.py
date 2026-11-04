@@ -58,7 +58,6 @@ class PolygroupLight(PolygroupEntity, RestoreEntity, LightEntity):
 
     _attr_name = None
     _attr_icon = "mdi:pine-tree"
-    _attr_assumed_state = True
     _attr_supported_features = LightEntityFeature.EFFECT
     _attr_effect_list = list(EFFECTS.values())
 
@@ -72,6 +71,11 @@ class PolygroupLight(PolygroupEntity, RestoreEntity, LightEntity):
     @property
     def is_on(self):
         return self.controller.state.power
+
+    @property
+    def assumed_state(self) -> bool:
+        """Show separate on/off actions only until power is synchronized."""
+        return self.controller.state.power is None
 
     @property
     def effect(self):

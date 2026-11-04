@@ -210,6 +210,7 @@ async def test_record_power_buttons_without_rf_and_restore(hass, entry, power, s
         hass.states.async_set(TX, "unknown")
         await hass.async_block_till_done()
         assert hass.states.get(LIGHT).state == state
+        assert not hass.states.get(LIGHT).attributes.get("assumed_state", False)
         for _ in range(2):
             await hass.services.async_call(
                 "light", f"turn_{state}", {"entity_id": LIGHT}, blocking=True
@@ -223,6 +224,12 @@ async def test_record_power_buttons_without_rf_and_restore(hass, entry, power, s
         send.assert_awaited_once()
         assert send.call_args.args[2].get_raw_timings() == encode_frame(0x807FFF00)
         assert hass.states.get(LIGHT).state == other_state
+        await hass.services.async_call(
+            "light", "toggle", {"entity_id": LIGHT}, blocking=True
+        )
+        assert send.await_count == 2
+        assert hass.states.get(LIGHT).state == state
+        assert not hass.states.get(LIGHT).attributes.get("assumed_state", False)
     assert await hass.config_entries.async_unload(entry.entry_id)
 
 
@@ -313,6 +320,7 @@ async def test_entities_services_and_restore(hass, entry):
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert hass.states.get(LIGHT).state == "unknown"
+    assert hass.states.get(LIGHT).attributes["assumed_state"] is True
     assert not hass.services.has_service(DOMAIN, "learn_command")
     assert not hass.services.has_service(DOMAIN, "set_command_code")
     assert not hass.states.async_entity_ids("event")
@@ -332,6 +340,7 @@ async def test_entities_services_and_restore(hass, entry):
         blocking=True,
     )
     assert hass.states.get(EFFECT_SELECT).state == "Clear Steady"
+    assert not hass.states.get(LIGHT).attributes.get("assumed_state", False)
     with patch.object(rf, "async_send_command", new_callable=AsyncMock) as send:
         await hass.services.async_call(
             "light",
@@ -397,6 +406,7 @@ async def test_entities_services_and_restore(hass, entry):
     await hass.async_block_till_done()
     assert hass.states.get(LIGHT).state == "off"
     assert hass.states.get(LIGHT).attributes["effect_key"] == "color_fade"
+    assert not hass.states.get(LIGHT).attributes.get("assumed_state", False)
     hass.states.async_set(TX, "unavailable")
     await hass.async_block_till_done()
     assert hass.states.get(LIGHT).state == "unavailable"

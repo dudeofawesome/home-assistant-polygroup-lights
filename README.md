@@ -18,7 +18,7 @@ The remote buttons send one command per press; On/Off toggles power even when it
 
 ## Stateful operation
 
-Successful Home Assistant transmissions update the assumed state once per action; failed sends leave it unchanged. Power changes only when the desired state differs from the current state, preventing repeated `light.turn_on` calls from toggling the tree off. Effects update after their command is sent. Physical remote and wired controller presses do not update Home Assistant.
+Successful Home Assistant transmissions update the assumed state once per action; failed sends leave it unchanged. Once power is recorded or restored, the light displays a single on/off toggle. Power changes only when the desired state differs from the current state, preventing repeated `light.turn_on` calls from toggling the tree off. Effects update after their command is sent. Physical remote and wired controller presses do not update Home Assistant.
 
 The tree supplies no acknowledgement or state readback. Power begins unknown because On/Off is a toggle. Observe the tree, then press **Record tree as on** or **Record tree as off** under Configuration on its device page. These buttons update Home Assistant's power estimate without sending RF and remain available when the transmitter is offline. After recording the state, use the light's normal on/off controls. Synchronize again after physical remote or wired controller use, power loss, or any other change made outside Home Assistant. State is restored across restarts as an assumption. Availability of the light, effect dropdown, and remote command buttons follows the transmitter alone.
 
