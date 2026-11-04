@@ -3,15 +3,14 @@
     "step": {
       "user": {
         "title": "Polygroup Christmas tree",
-        "description": "Select the 433.895 MHz OOK transmitter and receiver. Both are required to track physical remote presses. Learn the remote buttons after setup.",
-        "data": {"transmitter": "RF transmitter", "receiver": "RF receiver"}
+        "description": "Select a 433.895 MHz OOK transmitter. Controls track assumed state after Home Assistant sends commands. Receiving physical remote commands is currently unsupported.",
+        "data": {"transmitter": "RF transmitter"}
       }
     },
-    "error": {"invalid_adapter": "Select compatible RF adapters from the lists."},
+    "error": {"invalid_adapter": "Select a compatible RF transmitter from the list."},
     "abort": {
       "already_configured": "This RF transmitter already has a tree configured.",
-      "receiver_support_required": "This Home Assistant version lacks native RF receiver support. Install a version exposing radio_frequency receivers and subscription helpers.",
-      "no_adapters": "Set up both a 433.895 MHz OOK RF transmitter and receiver first."
+      "no_adapters": "Set up a 433.895 MHz OOK RF transmitter first."
     }
   },
   "options": {

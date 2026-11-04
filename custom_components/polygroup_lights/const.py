@@ -3,7 +3,6 @@
 DOMAIN = "polygroup_lights"
 FREQUENCY = 433_895_000
 CONF_TRANSMITTER = "transmitter"
-CONF_RECEIVER = "receiver"
 CONF_CODES = "codes"
 CONF_BRIGHTNESS_LEVELS = "brightness_levels"
 

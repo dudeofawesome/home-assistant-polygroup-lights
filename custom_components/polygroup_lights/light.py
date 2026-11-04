@@ -16,7 +16,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.restore_state import RestoreEntity
 
-from .const import COMMANDS, CONF_RECEIVER, CONF_TRANSMITTER, DIMMABLE_EFFECTS, EFFECTS
+from .const import DIMMABLE_EFFECTS, EFFECTS
 from .entity import PolygroupEntity
 
 PARALLEL_UPDATES = 1
@@ -25,11 +25,6 @@ PARALLEL_UPDATES = 1
 async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities([PolygroupLight(entry)])
     platform = entity_platform.async_get_current_platform()
-    platform.async_register_entity_service(
-        "learn_command",
-        {vol.Required("command"): vol.In(COMMANDS)},
-        "async_learn_command",
-    )
     platform.async_register_entity_service(
         "synchronize_state",
         {
@@ -44,7 +39,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class PolygroupLight(PolygroupEntity, RestoreEntity, LightEntity):
-    """Track commands observed by the proxy; no feedback from the tree."""
+    """Restore assumed state and update it after successful transmissions."""
 
     _attr_name = None
     _attr_icon = "mdi:pine-tree"
@@ -54,18 +49,10 @@ class PolygroupLight(PolygroupEntity, RestoreEntity, LightEntity):
 
     def __init__(self, entry):
         super().__init__(entry, "light")
-        self.adapters = [entry.data[CONF_TRANSMITTER], entry.data[CONF_RECEIVER]]
+        self.adapters = self.controller.adapter_entities
         mode = ColorMode.BRIGHTNESS if self.controller.levels else ColorMode.ONOFF
         self._attr_color_mode = mode
         self._attr_supported_color_modes = {mode}
-
-    @property
-    def available(self) -> bool:
-        return all(
-            (state := self.hass.states.get(adapter)) is not None
-            and state.state != "unavailable"
-            for adapter in self.adapters
-        )
 
     @property
     def is_on(self):
@@ -90,8 +77,7 @@ class PolygroupLight(PolygroupEntity, RestoreEntity, LightEntity):
             "effect_key": c.state.effect,
             "brightness_index": c.state.brightness_index,
             "brightness_levels": c.levels,
-            "learned_commands": sorted(c.codes),
-            "learning_command": c.learning,
+            "available_commands": sorted(c.codes),
         }
 
     async def async_added_to_hass(self):
@@ -162,7 +148,9 @@ class PolygroupLight(PolygroupEntity, RestoreEntity, LightEntity):
                     needed.append("brightness")
             for command in needed:
                 if command not in c.codes:
-                    raise HomeAssistantError(f"Learn the {command} button first")
+                    raise HomeAssistantError(
+                        f"No verified RF code is available for {command}"
+                    )
             if not c.state.power:
                 await c.send("power", self._context)
             if effect:
@@ -191,9 +179,6 @@ class PolygroupLight(PolygroupEntity, RestoreEntity, LightEntity):
                 )
             if c.state.power:
                 await c.send("power", self._context)
-
-    async def async_learn_command(self, command: str):
-        self.controller.learn(command)
 
     async def async_synchronize_state(
         self, power: bool, effect=None, brightness_index=None

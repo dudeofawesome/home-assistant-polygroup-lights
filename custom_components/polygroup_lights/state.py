@@ -1,4 +1,4 @@
-"""State inferred from commands, shared by HA actions and RF reception."""
+"""Protocol-independent state transitions and reusable RF burst filtering."""
 
 from dataclasses import dataclass
 

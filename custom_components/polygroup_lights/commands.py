@@ -6,6 +6,10 @@ from rf_protocols import ModulationType, RadioFrequencyCommand
 
 from .const import FREQUENCY
 
+# Populate only with hardware-verified codes for the supported controller/model.
+# The handoff's On/Off candidate has not been verified for transmission.
+VERIFIED_CODES: dict[str, int] = {}
+
 
 def encode_frame(code: int) -> list[int]:
     """Encode the measured 32-bit pulse-distance frame, MSB first."""

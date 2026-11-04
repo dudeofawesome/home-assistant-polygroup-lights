@@ -8,5 +8,5 @@
   "integration_type": "device",
   "iot_class": "assumed_state",
   "issue_tracker": "https://github.com/dudeofawesome/home-assistant-polygroup-lights/issues",
-  "version": "0.0.1"
+  "version": "0.0.2"
 }

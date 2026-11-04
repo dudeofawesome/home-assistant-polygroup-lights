@@ -25,6 +25,14 @@ class PolygroupEntity(Entity):
             model="PDR-053-29V / PDT-015-14 (053/056)",
         )
 
+    @property
+    def available(self) -> bool:
+        return all(
+            (state := self.hass.states.get(adapter)) is not None
+            and state.state != "unavailable"
+            for adapter in self.controller.adapter_entities
+        )
+
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
         self.controller.listeners.add(self.async_write_ha_state)
