@@ -1,6 +1,7 @@
-"""Brightness cycling and verified remote button controls."""
+"""Remote button controls and manual power-state synchronization."""
 
 from homeassistant.components.button import ButtonEntity
+from homeassistant.helpers.entity import EntityCategory
 
 from .commands import VERIFIED_CODES
 from .const import EFFECTS
@@ -13,7 +14,29 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities(
         [PolygroupBrightnessButton(entry)]
         + [PolygroupCommandButton(entry, command) for command in VERIFIED_CODES]
+        + [PolygroupPowerStateButton(entry, power) for power in (True, False)]
     )
+
+
+class PolygroupPowerStateButton(PolygroupEntity, ButtonEntity):
+    """Record the tree's observed power state without sending a command."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+
+    def __init__(self, entry, power: bool):
+        state = "on" if power else "off"
+        super().__init__(entry, f"record_power_{state}")
+        self.power = power
+        self._attr_name = f"Record tree as {state}"
+        self._attr_icon = f"mdi:lightbulb-{state}-outline"
+
+    @property
+    def available(self) -> bool:
+        """Recording an observation does not require an RF transmitter."""
+        return True
+
+    async def async_press(self):
+        await self.controller.async_synchronize_state(self.power)
 
 
 class PolygroupBrightnessButton(PolygroupEntity, ButtonEntity):

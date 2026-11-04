@@ -4,12 +4,15 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 from homeassistant.components import radio_frequency as rf
-from homeassistant.core import Context
+from homeassistant.core import Context, State
 from homeassistant.data_entry_flow import InvalidData
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_registry as er
 from homeassistant.setup import async_setup_component
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant_custom_component.common import (
+    MockConfigEntry,
+    mock_restore_cache,
+)
 
 from custom_components.polygroup_lights.commands import encode_frame
 from custom_components.polygroup_lights.config_flow import parse_levels
@@ -73,6 +76,91 @@ async def test_verified_buttons_enabled_by_default_and_use_native_transport(
     hass.states.async_set(TX, "unavailable")
     await hass.async_block_till_done()
     assert hass.states.get(entity_id).state == "unavailable"
+    assert await hass.config_entries.async_unload(entry.entry_id)
+
+
+@pytest.mark.parametrize(("power", "state"), [(True, "on"), (False, "off")])
+async def test_record_power_buttons_without_rf_and_restore(hass, entry, power, state):
+    hass.states.async_set(TX, "unavailable")
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    registry = er.async_get(hass)
+    entity_id = registry.async_get_entity_id(
+        "button", DOMAIN, f"{entry.entry_id}_record_power_{state}"
+    )
+    button = registry.async_get(entity_id)
+    assert button.disabled_by is None
+    assert button.entity_category == "config"
+    assert hass.states.get(entity_id).name == f"Christmas tree Record tree as {state}"
+    assert hass.states.get(entity_id).state != "unavailable"
+    assert hass.states.get(LIGHT).state == "unavailable"
+    controller = entry.runtime_data
+    assert controller.state.power is None
+    controller.state.effect = "clear_steady"
+    controller.state.brightness_index = 1
+    controller.state.last_command = "brightness"
+    with patch.object(rf, "async_send_command", new_callable=AsyncMock) as send:
+        for _ in range(2):
+            await hass.services.async_call(
+                "button", "press", {"entity_id": entity_id}, blocking=True
+            )
+        assert controller.state.power is power
+        assert controller.state.effect == "clear_steady"
+        assert controller.state.brightness_index == 1
+        assert controller.state.last_command == "brightness"
+        send.assert_not_called()
+        assert await hass.config_entries.async_unload(entry.entry_id)
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+        assert hass.states.get(LIGHT).state == "unavailable"
+        assert entry.runtime_data.state.power is power
+        assert entry.runtime_data.state.effect == "clear_steady"
+        assert entry.runtime_data.state.brightness_index == 1
+        assert entry.runtime_data.state.last_command == "brightness"
+        hass.states.async_set(TX, "unknown")
+        await hass.async_block_till_done()
+        assert hass.states.get(LIGHT).state == state
+        for _ in range(2):
+            await hass.services.async_call(
+                "light", f"turn_{state}", {"entity_id": LIGHT}, blocking=True
+            )
+        send.assert_not_called()
+        other_state = "off" if power else "on"
+        for _ in range(2):
+            await hass.services.async_call(
+                "light", f"turn_{other_state}", {"entity_id": LIGHT}, blocking=True
+            )
+        send.assert_awaited_once()
+        assert send.call_args.args[2].get_raw_timings() == encode_frame(0x807FFF00)
+        assert hass.states.get(LIGHT).state == other_state
+    assert await hass.config_entries.async_unload(entry.entry_id)
+
+
+@pytest.mark.parametrize(("power", "state"), [(True, "on"), (False, "off")])
+async def test_restore_light_state_saved_without_extra_data(hass, entry, power, state):
+    mock_restore_cache(
+        hass,
+        [
+            State(
+                LIGHT,
+                state,
+                {
+                    "effect_key": "clear_steady",
+                    "brightness_index": 1,
+                    "brightness_levels": [100, 50, 25],
+                    "last_command": "brightness",
+                },
+            )
+        ],
+    )
+    hass.states.async_set(TX, "unknown")
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert hass.states.get(LIGHT).state == state
+    assert entry.runtime_data.state.power is power
+    assert entry.runtime_data.state.effect == "clear_steady"
+    assert entry.runtime_data.state.brightness_index == 1
+    assert entry.runtime_data.state.last_command == "brightness"
     assert await hass.config_entries.async_unload(entry.entry_id)
 
 

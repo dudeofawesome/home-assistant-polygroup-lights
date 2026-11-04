@@ -52,6 +52,27 @@ class TreeController:
         self.state.apply(command, self.levels)
         self.notify()
 
+    async def async_synchronize_state(
+        self,
+        power: bool,
+        effect: str | None = None,
+        brightness_index: int | None = None,
+    ) -> None:
+        """Record observed state without transmitting anything."""
+        async with self.lock:
+            if brightness_index is not None and not 0 <= brightness_index < len(
+                self.levels
+            ):
+                raise HomeAssistantError(
+                    "Brightness index is outside the configured cycle"
+                )
+            self.state.power = power
+            if effect is not None:
+                self.state.effect = effect
+            if brightness_index is not None:
+                self.state.brightness_index = brightness_index
+            self.notify()
+
     async def send(self, command: str, context: Any = None) -> None:
         """Send under the caller's lock; commit state only after success."""
         if command not in self.codes:

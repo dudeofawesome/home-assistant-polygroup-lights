@@ -1,6 +1,7 @@
 """Stateful light effects and optional calibrated brightness."""
 
 import asyncio
+from dataclasses import asdict, dataclass
 from typing import Any
 
 import voluptuous as vol
@@ -14,12 +15,26 @@ from homeassistant.components.light import (
 from homeassistant.const import STATE_OFF, STATE_ON
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_platform
-from homeassistant.helpers.restore_state import RestoreEntity
+from homeassistant.helpers.restore_state import ExtraStoredData, RestoreEntity
 
 from .const import DIMMABLE_EFFECTS, EFFECTS
 from .entity import PolygroupEntity
 
 PARALLEL_UPDATES = 1
+
+
+@dataclass
+class PolygroupStoredState(ExtraStoredData):
+    """Preserve assumed state even while the light is unavailable."""
+
+    power: bool | None
+    effect_key: str | None
+    brightness_index: int | None
+    brightness_levels: list[int]
+    last_command: str | None
+
+    def as_dict(self) -> dict[str, Any]:
+        return asdict(self)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -80,33 +95,54 @@ class PolygroupLight(PolygroupEntity, RestoreEntity, LightEntity):
             "available_commands": sorted(c.codes),
         }
 
+    @property
+    def extra_restore_state_data(self) -> PolygroupStoredState:
+        c = self.controller
+        return PolygroupStoredState(
+            power=c.state.power,
+            effect_key=c.state.effect,
+            brightness_index=c.state.brightness_index,
+            brightness_levels=c.levels,
+            last_command=c.state.last_command,
+        )
+
     async def async_added_to_hass(self):
         await super().async_added_to_hass()
-        if (last := await self.async_get_last_state()) is not None:
-            state = self.controller.state
-            if state.power is None and last.state in (STATE_ON, STATE_OFF):
+        last = await self.async_get_last_state()
+        extra = await self.async_get_last_extra_data()
+        if extra is not None:
+            attributes = extra.as_dict()
+        elif last is not None:
+            attributes = last.attributes
+        else:
+            return
+        state = self.controller.state
+        if state.power is None:
+            if isinstance(power := attributes.get("power"), bool):
+                state.power = power
+            elif last is not None and last.state in (STATE_ON, STATE_OFF):
                 state.power = last.state == STATE_ON
-            if state.effect is None:
-                effect_key = last.attributes.get("effect_key")
-                if effect_key in EFFECTS:
-                    state.effect = effect_key
-                else:
-                    state.effect = next(
-                        (
-                            key
-                            for key, value in EFFECTS.items()
-                            if value == last.attributes.get(ATTR_EFFECT)
-                        ),
-                        None,
-                    )
-            state.last_command = last.attributes.get("last_command")
-            index = last.attributes.get("brightness_index")
-            if (
-                last.attributes.get("brightness_levels") == self.controller.levels
-                and isinstance(index, int)
-                and 0 <= index < len(self.controller.levels)
-            ):
-                state.brightness_index = index
+        if state.effect is None:
+            effect_key = attributes.get("effect_key")
+            if effect_key in EFFECTS:
+                state.effect = effect_key
+            else:
+                state.effect = next(
+                    (
+                        key
+                        for key, value in EFFECTS.items()
+                        if value == attributes.get(ATTR_EFFECT)
+                    ),
+                    None,
+                )
+        state.last_command = attributes.get("last_command")
+        index = attributes.get("brightness_index")
+        if (
+            attributes.get("brightness_levels") == self.controller.levels
+            and isinstance(index, int)
+            and 0 <= index < len(self.controller.levels)
+        ):
+            state.brightness_index = index
 
     async def async_turn_on(self, **kwargs: Any):
         c = self.controller
@@ -184,15 +220,4 @@ class PolygroupLight(PolygroupEntity, RestoreEntity, LightEntity):
         self, power: bool, effect=None, brightness_index=None
     ):
         """Record observed state without transmitting anything."""
-        c = self.controller
-        async with c.lock:
-            if brightness_index is not None and brightness_index >= len(c.levels):
-                raise HomeAssistantError(
-                    "Brightness index is outside the configured cycle"
-                )
-            c.state.power = power
-            if effect is not None:
-                c.state.effect = effect
-            if brightness_index is not None:
-                c.state.brightness_index = brightness_index
-            c.notify()
+        await self.controller.async_synchronize_state(power, effect, brightness_index)
