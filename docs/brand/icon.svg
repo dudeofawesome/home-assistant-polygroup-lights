@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Polygroup Lights</title>
+  <!-- Export with rsvg-convert -w 256 -h 256 -o custom_components/polygroup_lights/brand/icon.png docs/brand/icon.svg. -->
+  <rect x="108" y="210" width="40" height="46" rx="6" fill="#805238"/>
+  <path d="M128 24 202 90H174L230 156H196L256 224H0L60 156H26L82 90H54Z" fill="#16784b"/>
+  <path d="M82 88Q128 114 174 88M62 150Q128 184 194 150M30 211Q128 241 226 211" fill="none" stroke="#a8c988" stroke-width="5" stroke-linecap="round"/>
+  <path d="m128 0 8 18 20 2-15 12 4 20-17-10-17 10 4-20-15-12 20-2Z" fill="#ffcc4d"/>
+  <g stroke="#16784b" stroke-width="3">
+    <circle cx="103" cy="97" r="10" fill="#ffcc4d"/>
+    <circle cx="155" cy="98" r="10" fill="#ff6b70"/>
+    <circle cx="84" cy="159" r="11" fill="#6bd4ff"/>
+    <circle cx="137" cy="167" r="11" fill="#fff1cc"/>
+    <circle cx="184" cy="156" r="11" fill="#ffcc4d"/>
+    <circle cx="61" cy="218" r="11" fill="#ff6b70"/>
+    <circle cx="126" cy="226" r="11" fill="#6bd4ff"/>
+    <circle cx="195" cy="219" r="11" fill="#fff1cc"/>
+  </g>
+</svg>
