@@ -1,9 +1,8 @@
-"""Brightness cycling and replay tests for captured remote buttons."""
+"""Brightness cycling and verified remote button controls."""
 
 from homeassistant.components.button import ButtonEntity
-from homeassistant.helpers.entity import EntityCategory
 
-from .commands import CAPTURED_CODES
+from .commands import VERIFIED_CODES
 from .const import EFFECTS
 from .entity import PolygroupEntity
 
@@ -13,7 +12,7 @@ PARALLEL_UPDATES = 1
 async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities(
         [PolygroupBrightnessButton(entry)]
-        + [PolygroupCaptureTestButton(entry, command) for command in CAPTURED_CODES]
+        + [PolygroupCommandButton(entry, command) for command in VERIFIED_CODES]
     )
 
 
@@ -32,19 +31,19 @@ class PolygroupBrightnessButton(PolygroupEntity, ButtonEntity):
             await self.controller.send("brightness", self._context)
 
 
-class PolygroupCaptureTestButton(PolygroupEntity, ButtonEntity):
-    """Test a captured code before it becomes a verified default."""
+class PolygroupCommandButton(PolygroupEntity, ButtonEntity):
+    """Send one verified remote button command."""
 
-    _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_icon = "mdi:remote"
 
     def __init__(self, entry, command):
+        # Keep the original unique ID so existing entity references survive.
         super().__init__(entry, f"test_captured_{command}")
         self.command = command
         label = {**EFFECTS, "brightness": "Brightness", "power": "On/Off"}[command]
-        self._attr_name = f"Test captured {label}"
+        self._attr_name = label
         self.adapters = self.controller.adapter_entities
 
     async def async_press(self):
         async with self.controller.lock:
-            await self.controller.send_captured(self.command, self._context)
+            await self.controller.send(self.command, self._context)

@@ -12,9 +12,9 @@ Add `https://github.com/dudeofawesome/home-assistant-polygroup-lights` as an Int
 
 ## Hardware support status
 
-The model's command set is still being captured and verified during development. No verified RF codes are bundled yet, so a fresh installation's normal light controls cannot transmit tree commands. Unsupported commands report an error rather than sending guessed codes. Model support should supply bundled codes; users should not need to learn or enter them. The light's `available_commands` attribute lists commands with an available code.
+Verified RF codes are bundled for Combo, Clear Steady, Color Steady, Clear Twinkle, Brightness, and On/Off. These commands work through the light and enabled-by-default remote buttons without learning or entering codes. The remaining seven effects are not yet supported and report an error if requested. The light's `available_commands` attribute lists commands with an available code, including compatible saved bindings.
 
-Enabled-by-default diagnostic buttons allow replay testing of captured Combo, Clear Steady, Color Steady, Clear Twinkle, Brightness, and On/Off codes. To test, press the corresponding **Test captured …** entity on the tree's device page while observing the tree. These send real RF commands; On/Off toggles power. The tree's acceptance of these captures is unverified. Successful sends update assumed state, but do not establish that the tree responded. Normal light controls and Cycle brightness use verified defaults or existing saved bindings only.
+The remote buttons send one command per press; On/Off toggles power even when its current state is unknown. The light's on/off controls require synchronized power state to avoid unwanted toggles. Brightness and Cycle brightness both send the physical remote's brightness command without assuming a percentage.
 
 ## Stateful operation
 

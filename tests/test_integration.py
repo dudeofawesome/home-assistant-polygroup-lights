@@ -31,7 +31,7 @@ LIGHT = "light.christmas_tree"
         ("clear_twinkle", 0x807FEE11),
     ],
 )
-async def test_captured_buttons_enabled_by_default_and_use_native_transport(
+async def test_verified_buttons_enabled_by_default_and_use_native_transport(
     hass, entry, command, code
 ):
     hass.states.async_set(TX, "unknown")
@@ -42,6 +42,7 @@ async def test_captured_buttons_enabled_by_default_and_use_native_transport(
         "button", DOMAIN, f"{entry.entry_id}_test_captured_{command}"
     )
     assert registry.async_get(entity_id).disabled_by is None
+    assert registry.async_get(entity_id).entity_category is None
     assert hass.states.get(entity_id) is not None
     controller = entry.runtime_data
     controller.state.power = False
@@ -84,9 +85,9 @@ def entry(hass):
             "transmitter": TX,
             "codes": {
                 "power": 0x807FFF00,
-                "clear_steady": 2,
+                "clear_steady": 0x807F6699,
                 "color_fade": 3,
-                "brightness": 4,
+                "brightness": 0x807F11EE,
             },
         },
         options={"brightness_levels": [100, 50, 25]},
@@ -117,7 +118,7 @@ async def test_successful_send_commits_state_and_failure_does_not(hass, entry):
     assert controller.state.power is True
     listener.assert_called_once()
     with pytest.raises(HomeAssistantError, match="No verified RF code"):
-        await controller.send("combo")
+        await controller.send("clear_fade")
 
 
 async def test_state_transition_hook_never_transmits(hass, entry):
@@ -174,13 +175,13 @@ async def test_entities_services_and_restore(hass, entry):
             blocking=True,
         )
         assert send.call_count == 1
-        with pytest.raises(HomeAssistantError, match="No verified RF code.*combo"):
+        with pytest.raises(HomeAssistantError, match="No verified RF code.*clear_fade"):
             await hass.services.async_call(
                 "light",
                 "turn_on",
                 {
                     "entity_id": LIGHT,
-                    "effect": "Combo",
+                    "effect": "Clear Fade",
                 },
                 blocking=True,
             )
@@ -245,15 +246,34 @@ async def test_bundled_codes_and_saved_binding_precedence(hass, entry):
     assert controller.codes["power"] == 0x807FFF00
 
 
-async def test_fresh_install_does_not_send_unverified_candidate(hass):
+@pytest.mark.parametrize(
+    ("command", "code"),
+    [
+        ("combo", 0x807F7788),
+        ("clear_steady", 0x807F6699),
+        ("color_steady", 0x807F55AA),
+        ("clear_twinkle", 0x807FEE11),
+        ("brightness", 0x807F11EE),
+        ("power", 0x807FFF00),
+    ],
+)
+async def test_fresh_install_sends_verified_defaults(hass, command, code):
     entry = MockConfigEntry(domain=DOMAIN, data={"transmitter": TX})
     controller = TreeController(hass, entry)
-    assert controller.codes == {}
+    with patch.object(rf, "async_send_command", new_callable=AsyncMock) as send:
+        await controller.send(command)
+    assert send.call_args.args[2].get_raw_timings() == encode_frame(code)
+    assert controller.state.last_command == command
+
+
+async def test_fresh_install_rejects_uncaptured_commands(hass):
+    entry = MockConfigEntry(domain=DOMAIN, data={"transmitter": TX})
+    controller = TreeController(hass, entry)
     with (
         patch.object(rf, "async_send_command", new_callable=AsyncMock) as send,
-        pytest.raises(HomeAssistantError, match="No verified RF code.*power"),
+        pytest.raises(HomeAssistantError, match="No verified RF code.*clear_fade"),
     ):
-        await controller.send("power")
+        await controller.send("clear_fade")
     send.assert_not_called()
 
 

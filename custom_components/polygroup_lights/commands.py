@@ -6,12 +6,8 @@ from rf_protocols import ModulationType, RadioFrequencyCommand
 
 from .const import FREQUENCY
 
-# Populate only with hardware-verified codes for the supported controller/model.
-# The handoff's On/Off candidate has not been verified for transmission.
-VERIFIED_CODES: dict[str, int] = {}
-
-# Captured from physical remote presses; tree acceptance of replay is unverified.
-CAPTURED_CODES: dict[str, int] = {
+# Captured from the PDT-015-14 remote; replay confirmed on the tree by the user.
+VERIFIED_CODES: dict[str, int] = {
     "combo": 0x807F7788,
     "clear_steady": 0x807F6699,
     "color_steady": 0x807F55AA,

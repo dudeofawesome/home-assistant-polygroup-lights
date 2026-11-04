@@ -9,7 +9,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 
-from .commands import CAPTURED_CODES, VERIFIED_CODES, PolygroupCommand
+from .commands import VERIFIED_CODES, PolygroupCommand
 from .const import COMMANDS, CONF_BRIGHTNESS_LEVELS, CONF_CODES, CONF_TRANSMITTER
 from .state import TreeState
 
@@ -56,20 +56,10 @@ class TreeController:
         """Send under the caller's lock; commit state only after success."""
         if command not in self.codes:
             raise HomeAssistantError(f"No verified RF code is available for {command}")
-        await self._send_code(command, self.codes[command], context)
-
-    async def send_captured(self, command: str, context: Any = None) -> None:
-        """Replay a captured candidate only through an explicit test control."""
-        if command not in CAPTURED_CODES:
-            raise HomeAssistantError("No captured RF code is available for this button")
-        await self._send_code(command, CAPTURED_CODES[command], context)
-
-    async def _send_code(self, command: str, code: int, context: Any) -> None:
-        """Use native RF transport and commit only after successful transmission."""
         await rf.async_send_command(
             self.hass,
             self.entry.data[CONF_TRANSMITTER],
-            PolygroupCommand(code),
+            PolygroupCommand(self.codes[command]),
             context=context,
         )
         self.apply_command(command)
